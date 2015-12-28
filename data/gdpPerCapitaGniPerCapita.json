@@ -1,0 +1,77 @@
+[
+    {
+        "country": "Monaco",
+        "gdpPerCapita": 126599,
+        "gniPerCapita": 126599
+    },
+    {
+        "country": "Liechtenstein",
+        "gdpPerCapita": 104995,
+        "gniPerCapita": 89697
+    },
+    {
+        "country": "Luxembourg",
+        "gdpPerCapita": 79494,
+        "gniPerCapita": 66542
+    },
+    {
+        "country": "Norway",
+        "gdpPerCapita": 66775,
+        "gniPerCapita": 67506
+    },
+    {
+        "country": "Channel Islands",
+        "gdpPerCapita": 57209,
+        "gniPerCapita": 55170
+    },
+    {
+        "country": "Iceland",
+        "gdpPerCapita": 56445,
+        "gniPerCapita": 54342
+    },
+    {
+        "country": "Switzerland",
+        "gdpPerCapita": 54797,
+        "gniPerCapita": 59478
+    },
+    {
+        "country": "Qatar",
+        "gdpPerCapita": 53207,
+        "gniPerCapita": 46377
+    },
+    {
+        "country": "Ireland",
+        "gdpPerCapita": 50815,
+        "gniPerCapita": 44118
+    },
+    {
+        "country": "Denmark",
+        "gdpPerCapita": 48816,
+        "gniPerCapita": 49188
+    },
+    {
+        "country": "San Marino",
+        "gdpPerCapita": 47035,
+        "gniPerCapita": 41251
+    },
+    {
+        "country": "United States",
+        "gdpPerCapita": 44307,
+        "gniPerCapita": 44741
+    },
+    {
+        "country": "Nigeria",
+        "gdpPerCapita": 43498,
+        "gniPerCapita": 43819
+    },
+    {
+        "country": "Sweden",
+        "gdpPerCapita": 43085,
+        "gniPerCapita": 43667
+    },
+    {
+        "country": "Netherlands",
+        "gdpPerCapita": 41577,
+        "gniPerCapita": 41741
+    }
+]
