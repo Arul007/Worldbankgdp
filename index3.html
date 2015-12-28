@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html>
+<meta charset="utf-8">
 
 <head>
     <!-- Website Title & Description for Search Engine purposes -->
@@ -26,50 +27,19 @@ body {
   shape-rendering: crispEdges;
 }
 
-.bar {
-  fill: green;
-}
-
-.bar:hover {
-  fill: orangered ;
-}
-
 .x.axis path {
   display: none;
 }
 
-.d3-tip {
-  line-height: 1;
-  font-weight: bold;
-  padding: 12px;
-  background: rgba(0, 0, 0, 0.8);
-  color: #fff;
-  border-radius: 2px;
+.line {
+  fill: none;
+  stroke: steelblue;
+  stroke-width: 1.5px;
 }
 
-/* Creates a small triangle extender for the tooltip */
-.d3-tip:after {
-  box-sizing: border-box;
-  display: inline;
-  font-size: 10px;
-  width: 100%;
-  line-height: 1;
-  color: rgba(0, 0, 0, 0.8);
-  content: "\25BC";
-  position: absolute;
-  text-align: center;
-}
-
-/* Style northward tooltips differently */
-.d3-tip.n:after {
-  margin: -1px 0 0 0;
-  top: 100%;
-  left: 0;
-}
 </style>
 <body>
-<script src="http://d3js.org/d3.v3.min.js"></script>
-<script src="http://labratrevenge.com/d3-tip/javascripts/d3.tip.v0.6.3.js"></script>
+  <script src="http://d3js.org/d3.v3.min.js"></script>
 <nav class="navbar navbar-default navbar-fixed-top">
             <div class="container-fluid">
                 <div class="collapse navbar-collapse" id="navbar1">
@@ -88,98 +58,102 @@ body {
         <div class="col-sm-12 feature">
             <div class="panel panel-default">
                 <div class="panel-heading">
-                    <h3 class="panel-title">GDP Growth Of India Per Year</h3>
+                    <h3 class="panel-title">GDP Aggregate of Continents Per Year</h3>
                 </div> <!-- end panel-heading -->
-                <div class="panel-body gdp_India">
+                <div class="panel-body gdp_Continent">
 
                 </div>
 
-                <a href="#" target="_blank" class="btn btn-warning btn-block">Year wise GDP Growth</a>
+                <a href="#" target="_blank" class="btn btn-warning btn-block">Year wise GDP Aggregate</a>
             </div> <!-- end panel -->
         </div>
         </div>
 
         </div>
-
         <script>
-
-        var margin = {top: 40, right: 20, bottom: 30, left: 40},
+            var margin = {top: 20, right: 130, bottom: 30, left: 60},
             width = 1400;
             height = 500;
-
-        var formatPercent = d3.format(".0%");
-
-        var x = d3.scale.ordinal()
-            .rangeRoundBands([0, width], .1);
-
-        var y = d3.scale.linear()
+            var x = d3.scale.linear()
+            .range([0, width]);
+            var y = d3.scale.linear()
             .range([height, 0]);
-
-        var xAxis = d3.svg.axis()
+            var color = d3.scale.category10();
+            var xAxis = d3.svg.axis()
             .scale(x)
             .orient("bottom");
-
-        var yAxis = d3.svg.axis()
+            var yAxis = d3.svg.axis()
             .scale(y)
-            .orient("left")
-            .tickFormat(formatPercent);
-
-        var tip = d3.tip()
-          .attr('class', 'd3-tip')
-          .offset([-10, 0])
-          .html(function(d) {
-            return "<strong>Gdp:</strong> <span style='color:red'>" + d.gdp + "</span>";
-          })
-
-        var svg = d3.select(".gdp_India").append("svg")
+            .innerTickSize(-width)
+            .orient("left");
+            var line = d3.svg.line()
+            .interpolate("basis")
+            .x(function(d) { return x(d.year); })
+            .y(function(d) { return y(d.gdpPer); });
+            var svg = d3.select(".gdp_Continent").append("svg")
             .attr("width", width + margin.left + margin.right)
             .attr("height", height + margin.top + margin.bottom)
-          .append("g")
+            .append("g")
             .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-
-        svg.call(tip);
-
-        d3.json("./data/gdpIndia.json",function(error, data) {
-          //data.sort(function(a, b) { return b.gdp - a.gdp; });
-          x.domain(data.map(function(d) { return d.year; }));
-          y.domain([0, d3.max(data, function(d) { return d.gdp; })]);
-
-          svg.append("g")
+            d3.json("data/gdpPerContJson.json", function(error, data) {
+              if (error) throw error;
+              x.domain([d3.min(data, function(d){ return d.year; }), d3.max(data, function(d){ return d.year; })]);
+              color.domain(d3.keys(data[0]).filter(function(key) { return key !== "year"; }));
+              var cities = color.domain().map(function(name) {
+                return {
+                  name: name,
+                  values: data.map(function(d) {
+                    return {year: d.year, gdpPer: +d[name]};
+                  })
+                };
+              });
+              y.domain([
+                d3.min(cities, function(c) { return d3.min(c.values, function(v) { return v.gdpPer; }); }),
+                d3.max(cities, function(c) { return d3.max(c.values, function(v) { return v.gdpPer; }); })
+              ]);
+              svg.append("g")
               .attr("class", "x axis")
               .attr("transform", "translate(0," + height + ")")
-              .call(xAxis)
-
-
-
-          svg.append("g")
+              .call(xAxis);
+              svg.append("g")
               .attr("class", "y axis")
               .call(yAxis)
-            .append("text")
+              .append("text")
               .attr("transform", "rotate(-90)")
               .attr("y", 6)
               .attr("dy", ".71em")
               .style("text-anchor", "end")
-              .text("GDP Growth of India");
-
-          svg.selectAll(".bar")
-              .data(data)
-            .enter().append("rect")
-              .attr("class", "bar")
-              .attr("x", function(d) { return x(d.year); })
-              .attr("width", x.rangeBand())
-              .attr("y", function(d) { return y(d.gdp); })
-              .attr("height", function(d) { return height - y(d.gdp); })
-              .on('mouseover', tip.show)
-              .on('mouseout', tip.hide)
-
-        });
-
-        function type(d) {
-          d.gdp = +d.gdp;
-          return d;
-        }
-
-        </script>
-
+              .text("GDP Percapita");
+              var city = svg.selectAll(".city")
+              .data(cities)
+              .enter().append("g")
+              .attr("class", "city");
+              city.append("path")
+              .attr("class", "line")
+              .attr("d", function(d) { return line(d.values); })
+              .attr("data-legend",function(d) { return d.name})
+              .style("stroke", function(d) { return color(d.name); });
+              city.append("text")
+              .datum(function(d) { return {name: d.name, value: d.values[d.values.length - 1]}; })
+              .attr("transform", function(d) { return "translate(" + x(d.value.year) + "," + y(d.value.gdpPer) + ")"; })
+              .attr("x", 3)
+              .attr("dy", ".35em")
+              .style("text-transform","capitalize")
+              .style("padding-bottom","2cm")
+              .text(function(d) { return d.name; });
+              legend = svg.append("g")
+              .attr("class","legend")
+              .attr("transform","translate(50,30)")
+              .style("font-size","12px")
+              .style("text-transform","capitalize")
+              .call(d3.legend)
+              setTimeout(function() {
+                legend
+                .style("font-size","20px")
+                .attr("data-style-padding",10)
+                .call(d3.legend)
+              },1000)
+            });
+    </script>
 </body>
 </html>
